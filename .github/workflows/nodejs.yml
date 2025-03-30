@@ -30,3 +30,10 @@ jobs:
       - name: npm run test:features
         run: |
           npm run test:features
+      - name: Deploy to Railway
+        if: success() # Solo ejecuta este paso si todos los anteriores pasaron
+        run: |
+          npm install -g @railway/cli
+          railway up --service="475472f6-a6d0-4938-ab72-94ba30baf96d"
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
