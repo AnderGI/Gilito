@@ -1,5 +1,7 @@
 import { AfterAll, BeforeAll, Given, Then } from '@cucumber/cucumber';
 import assert from 'assert';
+import { createReadStream } from 'fs';
+import { basename } from 'path';
 import request from 'supertest';
 
 import { BackofficeBackendApp } from '../../../../../../src/apps/backoffice/backend/BackofficeBackendApp';
@@ -16,11 +18,16 @@ Then('the response status code should be {int}', async (status: number) => {
 	_response = await _request.expect(status);
 });
 
-Given('I send a PUT request to {string} with body:', (route: string, body: string) => {
-	_request = request(application.httpServer)
-		.put(route)
-		.send(JSON.parse(body) as object);
-});
+Given(
+	'I send a PUT request to {string} with file in {string}',
+	(route: string, filePath: string) => {
+		const filestream = createReadStream(filePath);
+
+		_request = request(application.httpServer)
+			.put(route)
+			.attach('data', filestream, { filename: basename(filePath), contentType: 'text/plain' });
+	}
+);
 
 Then('the response should be empty', () => {
 	assert.deepStrictEqual(_response.body, {});
