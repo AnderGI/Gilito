@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
 	destination(req, file, cb) {
 		const uploadDir =
 			process.env.NODE_ENV === 'test'
-				? '/home/andergi/ander/repositories/Gilito/test/uploads'
+				? '/home/andergi/ander/repositories/Gilito/tests/uploads'
 				: '/home/andergi/ander/repositories/Gilito/uploads';
 
 		// Opcionalmente, asegúrate de que el directorio exista
