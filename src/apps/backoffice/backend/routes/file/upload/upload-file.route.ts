@@ -2,10 +2,8 @@ import { NextFunction, Request, Response, Router } from 'express';
 import { param, validationResult } from 'express-validator';
 import fs from 'fs';
 import httpStatus from 'http-status';
-import multer, { FileFilterCallback } from 'multer';
+import multer from 'multer';
 import path from 'path';
-
-type HttpError = Error & { status: number };
 
 const requestSchema = [param('id').isUUID('4').notEmpty()];
 const storage = multer.diskStorage({
@@ -30,14 +28,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
 	storage,
-	fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
+	fileFilter: (req, file, cb) => {
 		const allowedMime = 'text/plain';
 		const allowedExt = '.txt';
 
 		const fileExt = path.extname(file.originalname).toLowerCase();
 
 		if (file.mimetype !== allowedMime || fileExt !== allowedExt) {
-			const error = new Error('Only .txt files are allowed') as HttpError;
+			const error = new Error('Only .txt files are allowed') as Error & { status?: number };
 			error.status = httpStatus.BAD_REQUEST;
 
 			cb(error);
@@ -73,6 +71,9 @@ export const register = (router: Router): void => {
 			if (err instanceof multer.MulterError || err.status === httpStatus.BAD_REQUEST) {
 				return res.status(httpStatus.BAD_REQUEST).json({ error: err.message });
 			}
+
+			// Loguea el error para debug
+			console.error('Unhandled error:', err);
 
 			return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
 		}
