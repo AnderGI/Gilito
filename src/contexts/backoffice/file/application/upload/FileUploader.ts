@@ -4,7 +4,7 @@ import FIleRepository from '../../domain/FIleRepository';
 export default class FileUploader {
 	constructor(private readonly repository: FIleRepository) {}
 	public async upload(id: string, filePath: string): Promise<void> {
-		const _ = new File(id, filePath);
+		const _ = File.fromPrimitives({ id, path: filePath });
 		await this.repository.save(_);
 	}
 }

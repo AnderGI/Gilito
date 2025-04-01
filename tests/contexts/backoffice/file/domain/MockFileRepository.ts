@@ -14,7 +14,7 @@ export default class MockFileRepository extends FIleRepository {
 		return Promise.resolve();
 	}
 
-	public expectSAveToHaveBeenCalledWith(expected: File): void {
+	public expectSaveToHaveBeenCalledWith(expected: File): void {
 		expect(this.mockSave).toHaveBeenNthCalledWith(1, expected);
 	}
 }
