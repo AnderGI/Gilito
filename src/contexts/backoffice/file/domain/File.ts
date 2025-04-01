@@ -1,7 +1,7 @@
 import FileId from './FileId';
 import FilePath from './FilePath';
 
-type FilePrimitives = {
+export type FilePrimitives = {
 	id: string;
 	path: string;
 };
