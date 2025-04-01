@@ -1,6 +1,6 @@
 import { AfterAll, BeforeAll, Given, Then } from '@cucumber/cucumber';
 import assert from 'assert';
-import { createReadStream, existsSync, mkdirSync, writeFileSync } from 'fs';
+import { createReadStream, mkdirSync, writeFileSync } from 'fs';
 import path from 'path';
 import request from 'supertest';
 
@@ -10,67 +10,46 @@ let _request: request.Test;
 let application: BackofficeBackendApp;
 let _response: request.Response;
 
+// -------- GET --------
 Given('I send a GET request to {string}', (route: string) => {
 	_request = request(application.httpServer).get(route);
 });
 
+Given(
+	'I send a PUT request to {string} with a fake file of type {string}',
+	(route: string, mimeType: string) => {
+		const uploadsDir = path.resolve(process.cwd(), 'tests/uploads');
+		mkdirSync(uploadsDir, { recursive: true });
+
+		const ext = mimeType.includes('json') ? 'json' : 'txt';
+		const filename = `auto-generated.${ext}`;
+		const fullPath = path.join(uploadsDir, filename);
+
+		const content =
+			ext === 'json' ? JSON.stringify({ auto: true }) : 'Contenido de prueba automático';
+
+		writeFileSync(fullPath, content);
+
+		const fileStream = createReadStream(fullPath);
+
+		_request = request(application.httpServer).put(route).attach('data', fileStream, {
+			filename,
+			contentType: mimeType
+		});
+	}
+);
+
+// -------- THEN --------
 Then('the response status code should be {int}', async (status: number) => {
 	_response = await _request.expect(status);
 });
-
-Given(
-	'I send a PUT request to {string} with file in {string}',
-	(route: string, filePath: string) => {
-		const fullPath = path.resolve(process.cwd(), filePath);
-
-		// Auto-crear si no existe
-		if (!existsSync(fullPath)) {
-			console.warn(`[Auto-crear] Archivo no encontrado. Generando: ${fullPath}`);
-
-			const ext = path.extname(fullPath);
-			const dir = path.dirname(fullPath);
-
-			mkdirSync(dir, { recursive: true });
-
-			if (ext === '.txt') {
-				writeFileSync(fullPath, 'Contenido dummy generado automáticamente');
-			} else if (ext === '.json') {
-				writeFileSync(fullPath, JSON.stringify({ auto: true }));
-			} else {
-				throw new Error(`Extensión de archivo no soportada: ${ext}`);
-			}
-		}
-
-		const filestream = createReadStream(fullPath);
-
-		_request = request(application.httpServer)
-			.put(route)
-			.attach('data', filestream, {
-				filename: path.basename(fullPath),
-				contentType: 'text/plain'
-			});
-	}
-);
 
 Then('the response should be empty', () => {
 	assert.deepStrictEqual(_response.body, {});
 });
 
+// -------- INIT & TEARDOWN --------
 BeforeAll(() => {
-	const uploadsPath = path.resolve(process.cwd(), 'tests/uploads');
-	mkdirSync(uploadsPath, { recursive: true });
-
-	const txtPath = path.join(uploadsPath, '01-demo.txt');
-	const jsonPath = path.join(uploadsPath, '01-demo.json');
-
-	if (!existsSync(txtPath)) {
-		writeFileSync(txtPath, 'Contenido de prueba para 01-demo.txt');
-	}
-
-	if (!existsSync(jsonPath)) {
-		writeFileSync(jsonPath, JSON.stringify({ mensaje: 'Contenido inválido' }));
-	}
-
 	application = new BackofficeBackendApp();
 	application.start();
 });
