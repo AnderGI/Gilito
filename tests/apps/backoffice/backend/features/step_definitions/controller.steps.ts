@@ -24,18 +24,18 @@ Given(
 		const fullPath = path.resolve(process.cwd(), filePath);
 
 		// Auto-crear si no existe
-		if (!fs.existsSync(fullPath)) {
+		if (!existsSync(fullPath)) {
 			console.warn(`[Auto-crear] Archivo no encontrado. Generando: ${fullPath}`);
 
 			const ext = path.extname(fullPath);
 			const dir = path.dirname(fullPath);
 
-			fs.mkdirSync(dir, { recursive: true });
+			mkdirSync(dir, { recursive: true });
 
 			if (ext === '.txt') {
-				fs.writeFileSync(fullPath, 'Contenido dummy generado automáticamente');
+				writeFileSync(fullPath, 'Contenido dummy generado automáticamente');
 			} else if (ext === '.json') {
-				fs.writeFileSync(fullPath, JSON.stringify({ auto: true }));
+				writeFileSync(fullPath, JSON.stringify({ auto: true }));
 			} else {
 				throw new Error(`Extensión de archivo no soportada: ${ext}`);
 			}
