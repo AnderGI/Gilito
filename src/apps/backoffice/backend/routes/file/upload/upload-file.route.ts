@@ -10,10 +10,8 @@ const storage = multer.diskStorage({
 	destination(req, file, cb) {
 		const uploadDir =
 			process.env.NODE_ENV === 'test'
-				? '/home/andergi/ander/repositories/Gilito/tests/uploads'
-				: '/home/andergi/ander/repositories/Gilito/uploads';
-
-		// Opcionalmente, asegúrate de que el directorio exista
+				? path.join(process.cwd(), 'tests/uploads')
+				: path.join(process.cwd(), 'uploads');
 
 		if (!fs.existsSync(uploadDir)) {
 			fs.mkdirSync(uploadDir, { recursive: true });
@@ -26,6 +24,7 @@ const storage = multer.diskStorage({
 		cb(null, `${file.fieldname}-${uniqueSuffix}`);
 	}
 });
+
 const upload = multer({
 	storage,
 	fileFilter: (req, file, cb) => {
