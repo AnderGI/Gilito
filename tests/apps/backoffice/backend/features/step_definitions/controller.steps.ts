@@ -1,7 +1,7 @@
-import { BeforeAll, Given, Then } from '@cucumber/cucumber';
+import { AfterAll, BeforeAll, Given, Then } from '@cucumber/cucumber';
 import assert from 'assert';
 import { createReadStream, existsSync, mkdirSync, writeFileSync } from 'fs';
-import path, { basename } from 'path';
+import path from 'path';
 import request from 'supertest';
 
 import { BackofficeBackendApp } from '../../../../../../src/apps/backoffice/backend/BackofficeBackendApp';
@@ -21,11 +21,20 @@ Then('the response status code should be {int}', async (status: number) => {
 Given(
 	'I send a PUT request to {string} with file in {string}',
 	(route: string, filePath: string) => {
-		const filestream = createReadStream(filePath);
+		const fullPath = path.resolve(process.cwd(), filePath);
+
+		if (!existsSync(fullPath)) {
+			throw new Error(`Test file not found: ${fullPath}`);
+		}
+
+		const filestream = createReadStream(fullPath);
 
 		_request = request(application.httpServer)
 			.put(route)
-			.attach('data', filestream, { filename: basename(filePath), contentType: 'text/plain' });
+			.attach('data', filestream, {
+				filename: path.basename(fullPath),
+				contentType: 'text/plain'
+			});
 	}
 );
 
@@ -35,7 +44,6 @@ Then('the response should be empty', () => {
 
 BeforeAll(() => {
 	const uploadsPath = path.resolve(process.cwd(), 'tests/uploads');
-
 	mkdirSync(uploadsPath, { recursive: true });
 
 	const txtPath = path.join(uploadsPath, '01-demo.txt');
@@ -46,9 +54,13 @@ BeforeAll(() => {
 	}
 
 	if (!existsSync(jsonPath)) {
-		writeFileSync(jsonPath, JSON.stringify({ mensaje: 'Este archivo no debería ser válido' }));
+		writeFileSync(jsonPath, JSON.stringify({ mensaje: 'Contenido inválido' }));
 	}
 
 	application = new BackofficeBackendApp();
 	application.start();
+});
+
+AfterAll(() => {
+	application.stop();
 });
