@@ -21,7 +21,8 @@
     "build": "npm run build:clean && npm run build:tsc && npm run build:di",
     "build:tsc": "tsc -p tsconfig.prod.json",
     "build:di": "copy 'src/**/*.{json,yaml,html,png}' dist/src",
-    "build:clean": "rm -r dist; exit 0"
+    "build:clean": "rm -r dist; exit 0",
+    "configure:minio": "ts-node src/apps/scripts/backoffice/backend/file/configure-minio.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.779.0",
