@@ -15,10 +15,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: run docker containers
-        run: docker compose up -d
-      - name: wait for containers to be ready
-        run: sleep 10
       - name: npm install
         run: |
           npm install
