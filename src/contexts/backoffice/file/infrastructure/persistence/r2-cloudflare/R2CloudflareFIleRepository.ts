@@ -11,7 +11,6 @@ export default class R2CloudflareFIleRepository extends FIleRepository {
 	public async save(_: File): Promise<void> {
 		const streamMain = createReadStream(_.path.path);
 		const streamBackup = createReadStream(_.path.path);
-		console.log(process.env);
 		const s3 = new S3Client({
 			endpoint: process.env.R2_ENDPOINT!,
 			region: process.env.R2_REGION!,

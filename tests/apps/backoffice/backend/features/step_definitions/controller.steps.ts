@@ -15,7 +15,6 @@ let _response: request.Response;
 BeforeAll(() => {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const envFile = path.resolve(process.cwd(), `.env.${process.env.NODE_ENV!}`);
-	console.log(envFile);
 	configDotenv({ path: envFile });
 	//console.log(process.env);
 
@@ -47,9 +46,7 @@ Given(
 	'I upload {string} via curl to {string} with mime type {string}',
 	async (filename: string, route: string, mimeType: string) => {
 		const filePath = path.resolve(process.cwd(), 'uploads', filename);
-		console.log(filePath);
 		const url = `http://localhost:5000${route}`;
-		console.log(url);
 
 		const curlCommand = `curl -s -o /dev/null -w "%{http_code}" -X PUT ${url} -F "data=@${filePath};type==${mimeType}"`;
 
