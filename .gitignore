@@ -4,4 +4,4 @@ dist/
 logs/
 data
 test-results.xml
-.env
+.env.*

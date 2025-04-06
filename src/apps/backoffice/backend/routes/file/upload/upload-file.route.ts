@@ -5,7 +5,12 @@ import httpStatus from 'http-status';
 import multer from 'multer';
 import path from 'path';
 
+import FilePutController from '../../../controllers/upload-file/FilePutController';
+import { UploadFileRequest } from '../../../controllers/upload-file/UploadFIleRequest';
+import container from '../../../dependency-injection/diod.config';
+
 const requestSchema = [param('id').isUUID('4').notEmpty()];
+
 const storage = multer.diskStorage({
 	destination(req, file, cb) {
 		const uploadDir =
@@ -45,6 +50,7 @@ const upload = multer({
 		cb(null, true);
 	}
 });
+
 export const register = (router: Router): void => {
 	router.put(
 		'/file/:id',
@@ -56,12 +62,21 @@ export const register = (router: Router): void => {
 
 				return;
 			}
+			console.log('multer');
 
 			return res.sendStatus(httpStatus.BAD_REQUEST);
 		},
 		upload.single('data'),
 		(req: Request, res: Response) => {
-			res.sendStatus(httpStatus.ACCEPTED);
+			const { id } = req.params;
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			const filePath = req.file!.path;
+
+			const enrichedRequest = req as UploadFileRequest;
+			enrichedRequest.fileId = id;
+			enrichedRequest.filePath = filePath;
+
+			container.get(FilePutController).run(enrichedRequest, res);
 		}
 	);
 
