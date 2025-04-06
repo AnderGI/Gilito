@@ -40,4 +40,4 @@ jobs:
           npm run test:unit
       - name: End-to-end tests
         run: |
-          npm run features:test:features
+          npm run test:features
