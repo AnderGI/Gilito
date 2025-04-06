@@ -15,7 +15,10 @@ let _response: request.Response;
 BeforeAll(() => {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const envFile = path.resolve(process.cwd(), `.env.${process.env.NODE_ENV!}`);
+	console.log(envFile);
 	configDotenv({ path: envFile });
+	//console.log(process.env);
+
 	application = new BackofficeBackendApp();
 	application.start();
 });

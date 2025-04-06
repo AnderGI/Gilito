@@ -2,38 +2,36 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { createReadStream } from 'fs';
 
 import File from '../../../domain/File';
 import FIleRepository from '../../../domain/FIleRepository';
 
 export default class R2CloudflareFIleRepository extends FIleRepository {
 	public async save(_: File): Promise<void> {
-		console.log('llega');
-		console.log(_.path.path);
-
-		// const streamMain = createReadStream(_.path.path);
-		//const streamBackup = createReadStream(_.path.path);
-
+		const streamMain = createReadStream(_.path.path);
+		const streamBackup = createReadStream(_.path.path);
+		console.log(process.env);
 		const s3 = new S3Client({
-			endpoint: 'https://2682a996f2c28fb73471c5372f310a2e.r2.cloudflarestorage.com',
-			region: 'auto',
+			endpoint: process.env.R2_ENDPOINT!,
+			region: process.env.R2_REGION!,
 			credentials: {
-				accessKeyId: '4884fef5b9ce46ef370425269af9fa8a',
-				secretAccessKey: 'e738e4660c09aea40f3d14420b928f511e95f8dfe296f6f11b0e9ac281b5357e'
+				accessKeyId: process.env.R2_RW_ACCESS_KEY_ID!,
+				secretAccessKey: process.env.R2_RW_SECRET_ACCESS_KEY!
 			}
 		});
 
 		const commandMain = new PutObjectCommand({
-			Bucket: 'gilito-files-features',
+			Bucket: process.env.R2_BUCKET_MAIN!,
 			Key: _.id.value,
-			Body: 'streamMain',
+			Body: streamMain,
 			ContentType: 'text/plain'
 		});
 
 		const commandBackup = new PutObjectCommand({
-			Bucket: 'gilito-files-features-backup',
+			Bucket: process.env.R2_BUCKET_BACKUP!,
 			Key: _.id.value,
-			Body: 'streamBackup',
+			Body: streamBackup,
 			ContentType: 'text/plain'
 		});
 
