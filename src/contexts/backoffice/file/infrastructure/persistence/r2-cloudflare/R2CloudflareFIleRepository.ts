@@ -38,6 +38,6 @@ export default class R2CloudflareFIleRepository extends FIleRepository {
 		});
 
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		Promise.all([s3.send(commandMain), s3.send(commandBackup)]);
+		await Promise.all([s3.send(commandMain), s3.send(commandBackup)]);
 	}
 }
