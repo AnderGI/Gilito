@@ -12,7 +12,10 @@ env:
   R2_BUCKET_BACKUP: ${{ secrets.R2_FEATURES_BUCKET_BACKUP }}
   R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
   R2_REGION: ${{ secrets.R2_REGION }}
-
+  RABBITMQ_HOSTNAME: ${{ secrets.FEATURES_RABBITMQ_HOSTNAME }}
+  RABBITMQ_USERNAME: ${{ secrets.FEATURES_RABBITMQ_USERNAME }}
+  RABBITMQ_PASSWORD: ${{ secrets.FEATURES_RABBITMQ_PASSWORD }}
+  RABBITMQ_PORT: ${{ secrets.FEATURES_RABBITMQ_PORT }}
 
 jobs:
   build:
@@ -33,6 +36,8 @@ jobs:
       - name: npm run lint
         run: |
           npm run lint
+      - name: Configure exchanges in RabbitMQ
+        run: npm run feature:rabbitmq:configure
       - name: npm run build
         run: |
           npm run build --if-present

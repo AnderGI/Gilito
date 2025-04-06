@@ -22,10 +22,13 @@
     "build": "npm run build:clean && npm run build:tsc && npm run build:di",
     "build:tsc": "tsc -p tsconfig.prod.json",
     "build:di": "copy 'src/**/*.{json,yaml,html,png}' dist/src",
-    "build:clean": "rm -r dist; exit 0"
+    "build:clean": "rm -r dist; exit 0",
+    "feature:rabbitmq:configure": "NODE_ENV=features npx ts-node ./src/apps/scripts/configure-rabbitmq.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.779.0",
+    "@types/amqplib": "^0.10.7",
+    "amqplib": "^0.10.7",
     "body-parser": "1.20.3",
     "bodybuilder": "2.4.0",
     "bson": "4.5.2",
