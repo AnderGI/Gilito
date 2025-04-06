@@ -52,8 +52,8 @@ Given(
 
 		await new Promise<void>(resolve => {
 			exec(curlCommand, (error, stdout, stderr) => {
-				console.log('📤 CURL STDOUT:', stdout);
-				console.error('❌ CURL STDERR:', stderr);
+				console.log(' 📤 CURL STDOUT:', stdout);
+				console.error(' ❌ CURL STDERR:', stderr);
 				if (error) {
 					console.error('⚠️ CURL Error object:', error);
 				}
