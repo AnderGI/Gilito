@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import 'reflect-metadata';
+
 import * as amqplib from 'amqplib';
+import { Service } from 'diod';
 import { configDotenv } from 'dotenv';
 import path from 'path';
 import process from 'process';
@@ -18,32 +21,52 @@ class RabbitMqConnectionConfig {
 	}
 }
 
-class RabbitMQConnection {
-	private readonly connection!: amqplib.ChannelModel;
-	private readonly channel!: amqplib.ConfirmChannel;
-	public constructor(connection: amqplib.ChannelModel, channel: amqplib.ConfirmChannel) {
-		this.connection = connection;
-		this.channel = channel;
+@Service()
+export class RabbitMQConnection {
+	private connection!: amqplib.ChannelModel;
+	private channel!: amqplib.ConfirmChannel;
+
+	public static init(): RabbitMQConnection {
+		return new RabbitMQConnection();
 	}
 
-	public static async create() {
-		const connection = await amqplib.connect(RabbitMqConnectionConfig.getConnectionConfig());
-		const confirmChannel = await connection.createConfirmChannel();
-
-		return new RabbitMQConnection(connection, confirmChannel);
+	public async create(): Promise<void> {
+		this.connection = await amqplib.connect(RabbitMqConnectionConfig.getConnectionConfig());
+		this.channel = await this.connection.createConfirmChannel();
 	}
 
 	public async declareExchanges(
 		exchange: string,
 		type: 'direct' | 'topic' | 'headers' | 'fanout' | 'match' | string,
 		options?: amqplib.Options.AssertExchange
-	) {
+	): Promise<void> {
 		await this.channel.assertExchange(exchange, type, options);
 	}
 
-	public async close() {
+	public async close(): Promise<void> {
 		await this.closeConfirmChannel();
 		await this.closeConnection();
+	}
+
+	public async publishEvent(exchange: string, routingKey: string, content: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			this.channel.publish(
+				exchange,
+				routingKey,
+				Buffer.from(content),
+				{
+					contentType: 'application/json',
+					contentEncoding: 'utf-8'
+				},
+				error => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve();
+					}
+				}
+			);
+		});
 	}
 
 	private async closeConfirmChannel() {
@@ -64,8 +87,8 @@ class RabbitMQConnection {
 }
 
 async function setup() {
-	const connection = await RabbitMQConnection.create();
-
+	const connection = RabbitMQConnection.init();
+	await connection.create();
 	await Promise.all([
 		connection.declareExchanges('domain_events', 'topic', {
 			durable: true,
