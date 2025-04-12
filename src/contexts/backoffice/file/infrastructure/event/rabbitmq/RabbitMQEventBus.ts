@@ -1,6 +1,6 @@
 import { Service } from 'diod';
 
-import { RabbitMQConnection } from '../../../../../../apps/scripts/configure-rabbitmq';
+import RabbitMQConnection from '../../../../../../apps/scripts/RabbitMQConnection';
 import { DomainEvent } from '../../../domain/DomainEvent';
 import { EventBus } from '../../../domain/EventBus';
 
@@ -11,11 +11,12 @@ export default class RabbitMQEventBus extends EventBus {
 	}
 
 	public async publish(_: DomainEvent): Promise<void> {
-		await this.connection.publishEvent(
-			'domain_events',
-			_.eventName,
-			JSON.stringify(_.toPrimitives())
-		);
+		// await this.connection.publishEvent(
+		// 	'domain_events',
+		// 	_.eventName,
+		// 	JSON.stringify(_.toPrimitives())
+		// );
+		console.log(this.connection, _);
 
 		return Promise.resolve();
 	}

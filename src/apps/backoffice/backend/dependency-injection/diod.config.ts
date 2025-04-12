@@ -6,7 +6,8 @@ import FIleRepository from '../../../../contexts/backoffice/file/domain/FIleRepo
 import RabbitMQEventBus from '../../../../contexts/backoffice/file/infrastructure/event/rabbitmq/RabbitMQEventBus';
 import R2CloudflareFIleRepository from '../../../../contexts/backoffice/file/infrastructure/persistence/r2-cloudflare/R2CloudflareFIleRepository';
 import SaveKnowledgeOnFileUploaded from '../../../../contexts/backoffice/knowledge/application/save/SaveKnowledgeOnFileUploaded';
-import { RabbitMQConnection } from '../../../scripts/configure-rabbitmq';
+import RabbitMQConnection from '../../../scripts/RabbitMQConnection';
+import RabbitMqConnectionConfig from '../../../scripts/RabbitMqConnectionConfig';
 import StatusGetController from '../controllers/status-health-check/StatusGetController';
 import FilePutController from '../controllers/upload-file/FilePutController';
 
@@ -14,9 +15,11 @@ const builder = new ContainerBuilder();
 builder.registerAndUse(StatusGetController);
 builder.registerAndUse(FileUploader);
 builder.registerAndUse(FilePutController);
-builder.register(RabbitMQConnection).useFactory(() => {
-	return RabbitMQConnection.init();
-});
+builder.registerAndUse(RabbitMqConnectionConfig);
+
+builder
+	.register(RabbitMQConnection)
+	.useFactory(c => RabbitMQConnection.create(c.get(RabbitMqConnectionConfig)));
 
 builder.registerAndUse(SaveKnowledgeOnFileUploaded).addTag('domainEventSubscriber');
 builder.register(FIleRepository).use(R2CloudflareFIleRepository);
