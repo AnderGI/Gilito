@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import 'reflect-metadata';
 
-import { DomainEvent } from '../../contexts/backoffice/file/domain/DomainEvent';
-import DomainEventSubscriber from '../../contexts/backoffice/knowledge/application/save/DomainEventSubscriber';
+import DomainEventSubscriber from '../../contexts/shared/domain/DomainEventSubscriber';
+import { DomainEvent } from '../../contexts/shared/domain/DomainEvent';
+import RabbitMQConnection from '../../shared/infrastructure/RabbitMQConnection';
 import container from '../backoffice/backend/dependency-injection/diod.config';
-import RabbitMQConnection from './RabbitMQConnection';
 
 async function setup() {
 	const connection = container.get(RabbitMQConnection);
@@ -17,7 +17,7 @@ async function setup() {
 	) as unknown as DomainEventSubscriber<DomainEvent>[];
 	const queuesAndBindigs = subscribers.map(_ => {
 		const queue = _.queueName();
-		const events = _.subscribedTo().map(_ => _.eventName);
+		const events = _.subscribedTo().map(_ => _.EVENT_NAME);
 
 		return { queue, events };
 	});

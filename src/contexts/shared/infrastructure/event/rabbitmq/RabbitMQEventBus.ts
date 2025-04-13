@@ -1,22 +1,24 @@
 import { Service } from 'diod';
 
-import RabbitMQConnection from '../../../../../../apps/scripts/RabbitMQConnection';
+import RabbitMQConnection from '../../../../../shared/infrastructure/RabbitMQConnection';
 import { DomainEvent } from '../../../domain/DomainEvent';
 import { EventBus } from '../../../domain/EventBus';
 
 @Service()
 export default class RabbitMQEventBus extends EventBus {
+	public static readonly MAIN_EXCHANGE = 'domain_events';
+
 	constructor(private readonly connection: RabbitMQConnection) {
 		super();
 	}
 
 	public async publish(_: DomainEvent): Promise<void> {
-		// await this.connection.publishEvent(
-		// 	'domain_events',
-		// 	_.eventName,
-		// 	JSON.stringify(_.toPrimitives())
-		// );
-		console.log(this.connection, _);
+		await this.connection.connect();
+		await this.connection.publishEvent(
+			RabbitMQEventBus.MAIN_EXCHANGE,
+			_.eventName,
+			JSON.stringify(_.toPrimitives())
+		);
 
 		return Promise.resolve();
 	}

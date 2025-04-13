@@ -9,7 +9,6 @@ import { BackofficeBackendApp } from './BackofficeBackendApp';
 const envFile = `.env.${process.env.NODE_ENV}`;
 const filePath = path.resolve(process.cwd(), envFile);
 configDotenv({ path: filePath });
-console.log(process.env);
 
 try {
 	new BackofficeBackendApp().start();

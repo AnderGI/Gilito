@@ -1,6 +1,6 @@
 import { validate } from 'uuid';
 
-import { InvalidUUIDException } from './InvalidUUIDException';
+import { InvalidUUIDException } from '../../../shared/domain/InvalidUUIDException';
 
 export default class FileId {
 	readonly value: string;

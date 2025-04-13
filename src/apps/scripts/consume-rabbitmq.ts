@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 
-import { DomainEvent } from '../../contexts/backoffice/file/domain/DomainEvent';
-import DomainEventSubscriber from '../../contexts/backoffice/knowledge/application/save/DomainEventSubscriber';
+import { DomainEvent } from '../../contexts/shared/domain/DomainEvent';
+import DomainEventSubscriber from '../../contexts/shared/domain/DomainEventSubscriber';
+import RabbitMQConnection from '../../shared/infrastructure/RabbitMQConnection';
 import container from '../backoffice/backend/dependency-injection/diod.config';
-import RabbitMQConnection from './RabbitMQConnection';
 
 export type QueuesToSubscriber = {
 	queueName: string;

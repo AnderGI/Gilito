@@ -1,6 +1,6 @@
 import FileUploader from '../../../../../../src/contexts/backoffice/file/application/upload/FileUploader';
 import FileUploadedDomainEvent from '../../../../../../src/contexts/backoffice/file/domain/FileUploadedDomainEvent';
-import { InvalidUUIDException } from '../../../../../../src/contexts/backoffice/file/domain/InvalidUUIDException';
+import { InvalidUUIDException } from '../../../../../../src/contexts/shared/domain/InvalidUUIDException';
 import { FileMother } from '../../domain/FileMother';
 import { FilePathMother } from '../../domain/FilePathMother';
 import MockEventBus from '../../domain/MockEventBus';

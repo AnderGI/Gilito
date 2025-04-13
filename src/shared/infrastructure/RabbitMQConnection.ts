@@ -1,9 +1,10 @@
 import * as amqplib from 'amqplib';
 import { Service } from 'diod';
 
-import { DomainEvent } from '../../contexts/backoffice/file/domain/DomainEvent';
-import DomainEventSubscriber from '../../contexts/backoffice/knowledge/application/save/DomainEventSubscriber';
-import { QueuesToSubscriber } from './consume-rabbitmq';
+import { QueuesToSubscriber } from '../../apps/scripts/consume-rabbitmq';
+import { DomainEvent } from '../../contexts/shared/domain/DomainEvent';
+import DomainEventSubscriber from '../../contexts/shared/domain/DomainEventSubscriber';
+import DomainEventJsonDeserializer from './DomainEventJsonDeserializer';
 import RabbitMqConnectionConfig from './RabbitMqConnectionConfig';
 
 @Service()
@@ -34,13 +35,23 @@ export default class RabbitMQConnection {
 	private connection!: amqplib.ChannelModel;
 	private channel!: amqplib.ConfirmChannel;
 
-	private constructor(private readonly rabbitMqConnectionConfig: RabbitMqConnectionConfig) {}
+	private constructor(
+		private readonly rabbitMqConnectionConfig: RabbitMqConnectionConfig,
+		private readonly domainEventJsonDeserializer: DomainEventJsonDeserializer
+	) {}
 
-	public static create(_: RabbitMqConnectionConfig): RabbitMQConnection {
-		return new RabbitMQConnection(_);
+	public static create(
+		_: RabbitMqConnectionConfig,
+		domainEventJsonDeserializer: DomainEventJsonDeserializer
+	): RabbitMQConnection {
+		return new RabbitMQConnection(_, domainEventJsonDeserializer);
 	}
 
 	public async connect(): Promise<void> {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (this.channel) {
+			return;
+		}
 		this.connection = await amqplib.connect(this.rabbitMqConnectionConfig.getConnectionConfig());
 		this.channel = await this.connection.createConfirmChannel();
 	}
@@ -88,14 +99,19 @@ export default class RabbitMQConnection {
 		await Promise.all(
 			queuesToSubscribers.map(_ =>
 				// eslint-disable-next-line @typescript-eslint/no-misused-promises
-				this.channel.consume(_.queueName, this._consume(_.subscriber, this.channel))
+				this.channel.consume(
+					_.queueName,
+					// eslint-disable-next-line @typescript-eslint/no-misused-promises
+					this._consume(_.subscriber, this.channel, this.domainEventJsonDeserializer)
+				)
 			)
 		);
 	}
 
 	private _consume(
 		subscriber: DomainEventSubscriber<DomainEvent>,
-		channel: amqplib.ConfirmChannel
+		channel: amqplib.ConfirmChannel,
+		domainEventJsonDeserializer: DomainEventJsonDeserializer
 	) {
 		return async (msg: amqplib.ConsumeMessage | null) => {
 			if (msg === null) {
@@ -104,7 +120,7 @@ export default class RabbitMQConnection {
 
 			try {
 				// Procesar el mensaje
-				await subscriber.handle(msg.content.toString());
+				await subscriber.handle(domainEventJsonDeserializer.deserialize(msg.content.toString()));
 				// Confirmar el mensaje como procesado
 				channel.ack(msg);
 			} catch (error) {

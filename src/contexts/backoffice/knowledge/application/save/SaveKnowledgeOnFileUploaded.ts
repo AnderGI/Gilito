@@ -1,11 +1,14 @@
 import { Service } from 'diod';
 
+import { DomainEvent } from '../../../../shared/domain/DomainEvent';
+import DomainEventSubscriber, {
+	DomainEventConstructor
+} from '../../../../shared/domain/DomainEventSubscriber';
 import FileUploadedDomainEvent from '../../../file/domain/FileUploadedDomainEvent';
-import DomainEventSubscriber, { DomainEventName } from './DomainEventSubscriber';
 
 @Service()
 export default class SaveKnowledgeOnFileUploaded extends DomainEventSubscriber<FileUploadedDomainEvent> {
-	public subscribedTo(): DomainEventName<FileUploadedDomainEvent>[] {
+	public subscribedTo(): DomainEventConstructor<FileUploadedDomainEvent>[] {
 		return [FileUploadedDomainEvent];
 	}
 
@@ -13,7 +16,8 @@ export default class SaveKnowledgeOnFileUploaded extends DomainEventSubscriber<F
 		return 'backoffice.knowledge.save_knowledge_on_file_uploaded';
 	}
 
-	public async handle(_: string): Promise<void> {
+	public async handle(_: DomainEvent): Promise<void> {
+		console.log('llega');
 		console.log(_);
 
 		return Promise.resolve();
