@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import 'reflect-metadata';
 
-import DomainEventSubscriber from '../../contexts/shared/domain/DomainEventSubscriber';
 import { DomainEvent } from '../../contexts/shared/domain/DomainEvent';
+import DomainEventSubscriber from '../../contexts/shared/domain/DomainEventSubscriber';
 import RabbitMQConnection from '../../shared/infrastructure/RabbitMQConnection';
 import container from '../backoffice/backend/dependency-injection/diod.config';
 

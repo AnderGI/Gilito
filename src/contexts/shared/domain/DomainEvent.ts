@@ -33,4 +33,8 @@ export abstract class DomainEvent {
 		occurredOn: Date;
 		attributes: DomainEventAttributes;
 	}): DomainEvent;
+
+	public equals(other: DomainEvent): boolean {
+		return this.constructor.name === other.constructor.name && this.eventName === other.eventName;
+	}
 }

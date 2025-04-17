@@ -12,7 +12,7 @@ describe('FileUploader', () => {
 			const eventBus = new MockEventBus();
 			const repo = new MockFileRepository();
 			const file = FileMother.create();
-			const event = new FileUploadedDomainEvent(file.path.path);
+			const event = new FileUploadedDomainEvent({ filePath: file.path.path });
 
 			const uploader = new FileUploader(repo, eventBus);
 

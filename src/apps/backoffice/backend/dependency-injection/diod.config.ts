@@ -1,4 +1,5 @@
 import { ContainerBuilder } from 'diod';
+import { DataSource } from 'typeorm';
 
 import FileUploader from '../../../../contexts/backoffice/file/application/upload/FileUploader';
 import FileRepository from '../../../../contexts/backoffice/file/domain/FIleRepository';
@@ -6,6 +7,8 @@ import R2CloudflareFIleRepository from '../../../../contexts/backoffice/file/inf
 import SaveKnowledgeOnFileUploaded from '../../../../contexts/backoffice/knowledge/application/save/SaveKnowledgeOnFileUploaded';
 import { EventBus } from '../../../../contexts/shared/domain/EventBus';
 import RabbitMQEventBus from '../../../../contexts/shared/infrastructure/event/rabbitmq/RabbitMQEventBus';
+import DomainEventFallback from '../../../../contexts/shared/infrastructure/persistence/typeorm/DomainEventFallback';
+import TypeOrmConnection from '../../../../contexts/shared/infrastructure/persistence/typeorm/TypeOrmConnection';
 import DomainEventJsonDeserializer from '../../../../shared/infrastructure/DomainEventJsonDeserializer';
 import RabbitMQConnection from '../../../../shared/infrastructure/RabbitMQConnection';
 import RabbitMqConnectionConfig from '../../../../shared/infrastructure/RabbitMqConnectionConfig';
@@ -18,6 +21,8 @@ builder.registerAndUse(FileUploader);
 builder.registerAndUse(FilePutController);
 builder.registerAndUse(RabbitMqConnectionConfig);
 builder.registerAndUse(DomainEventJsonDeserializer);
+builder.register(DataSource).useFactory(() => TypeOrmConnection.getConnection());
+builder.registerAndUse(DomainEventFallback);
 builder
 	.register(RabbitMQConnection)
 	.useFactory(c =>
