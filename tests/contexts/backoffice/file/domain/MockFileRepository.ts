@@ -1,7 +1,7 @@
 import File from '../../../../../src/contexts/backoffice/file/domain/File';
-import FIleRepository from '../../../../../src/contexts/backoffice/file/domain/FIleRepository';
+import FileRepository from '../../../../../src/contexts/backoffice/file/domain/FIleRepository';
 
-export default class MockFileRepository extends FIleRepository {
+export default class MockFileRepository extends FileRepository {
 	private readonly mockSave: jest.Mock;
 	constructor() {
 		super();

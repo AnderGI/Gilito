@@ -5,9 +5,9 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { createReadStream } from 'fs';
 
 import File from '../../../domain/File';
-import FIleRepository from '../../../domain/FIleRepository';
+import FileRepository from '../../../domain/FIleRepository';
 
-export default class R2CloudflareFIleRepository extends FIleRepository {
+export default class R2CloudflareFIleRepository extends FileRepository {
 	public async save(_: File): Promise<void> {
 		const streamMain = createReadStream(_.path.path);
 		const streamBackup = createReadStream(_.path.path);

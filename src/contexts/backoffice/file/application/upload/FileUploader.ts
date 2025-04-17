@@ -2,12 +2,12 @@ import { Service } from 'diod';
 
 import { EventBus } from '../../../../shared/domain/EventBus';
 import File from '../../domain/File';
-import FIleRepository from '../../domain/FIleRepository';
+import FileRepository from '../../domain/FIleRepository';
 import FileUploadedDomainEvent from '../../domain/FileUploadedDomainEvent';
 
 @Service()
 export default class FileUploader {
-	constructor(private readonly repository: FIleRepository, private readonly bus: EventBus) {}
+	constructor(private readonly repository: FileRepository, private readonly bus: EventBus) {}
 	public async upload(id: string, filePath: string): Promise<void> {
 		const _ = File.fromPrimitives({ id, path: filePath });
 		await this.repository.save(_);

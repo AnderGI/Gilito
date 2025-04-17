@@ -24,7 +24,8 @@
     "build:di": "copy 'src/**/*.{json,yaml,html,png}' dist/src",
     "build:clean": "rm -r dist; exit 0",
     "feature:rabbitmq:configure": "NODE_ENV=features npx ts-node ./src/apps/scripts/configure-rabbitmq.ts",
-    "feature:rabbitmq:consume": "NODE_ENV=features npx ts-node ./src/apps/scripts/consume-rabbitmq.ts"
+    "feature:rabbitmq:consume": "NODE_ENV=features npx ts-node ./src/apps/scripts/consume-rabbitmq.ts",
+    "feature:postrges:configure": "NODE_ENV=features npx ts-node ./src/apps/scripts/configure-postgres.ts"
 
   },
   "dependencies": {
@@ -52,8 +53,10 @@
     "multer": "1.4.5-lts.2",
     "node-dependency-injection": "2.6.11",
     "nunjucks": "3.2.4",
+    "pg": "^8.14.1",
     "reflect-metadata": "0.2.2",
     "ts-node": "10.9.1",
+    "typeorm": "^0.3.22",
     "uuid": "11.1.0",
     "winston": "3.3.3"
   },
