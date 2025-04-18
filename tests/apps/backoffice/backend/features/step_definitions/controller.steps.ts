@@ -12,18 +12,19 @@ let application: BackofficeBackendApp;
 let _response: request.Response;
 
 // -------- INIT & TEARDOWN --------
-BeforeAll(() => {
+BeforeAll(async () => {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const envFile = path.resolve(process.cwd(), `.env.${process.env.NODE_ENV!}`);
 	configDotenv({ path: envFile });
 	//console.log(process.env);
 
 	application = new BackofficeBackendApp();
-	application.start();
+	await application.start();
 });
 
-AfterAll(() => {
-	application.stop();
+AfterAll(async () => {
+	await application.stop();
+	setTimeout(() => process.exit(0), 30000);
 });
 
 // -------- GIVEN --------
