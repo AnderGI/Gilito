@@ -5,6 +5,9 @@ import FileUploader from '../../../../contexts/backoffice/file/application/uploa
 import FileRepository from '../../../../contexts/backoffice/file/domain/FIleRepository';
 import R2CloudflareFIleRepository from '../../../../contexts/backoffice/file/infrastructure/persistence/r2-cloudflare/R2CloudflareFIleRepository';
 import SaveKnowledgeOnFileUploaded from '../../../../contexts/backoffice/knowledge/application/save/SaveKnowledgeOnFileUploaded';
+import TypeAdder from '../../../../contexts/backoffice/type/application/add/TypesAdder';
+import TypeRepository from '../../../../contexts/backoffice/type/domain/TypeRepository';
+import TypeOrmTypeRepository from '../../../../contexts/backoffice/type/infrastructure/persistence/TypeOrmTypeRepository';
 import { EventBus } from '../../../../contexts/shared/domain/EventBus';
 import RabbitMQEventBus from '../../../../contexts/shared/infrastructure/event/rabbitmq/RabbitMQEventBus';
 import DomainEventFallback from '../../../../contexts/shared/infrastructure/persistence/typeorm/DomainEventFallback';
@@ -13,10 +16,14 @@ import DomainEventJsonDeserializer from '../../../../shared/infrastructure/Domai
 import RabbitMQConnection from '../../../../shared/infrastructure/RabbitMQConnection';
 import RabbitMqConnectionConfig from '../../../../shared/infrastructure/RabbitMqConnectionConfig';
 import StatusGetController from '../controllers/status-health-check/StatusGetController';
+import TypePutController from '../controllers/type/TypePutController';
 import FilePutController from '../controllers/upload-file/FilePutController';
 
 const builder = new ContainerBuilder();
 builder.registerAndUse(StatusGetController);
+builder.registerAndUse(TypePutController);
+builder.registerAndUse(TypeAdder);
+builder.register(TypeRepository).use(TypeOrmTypeRepository);
 builder.registerAndUse(FileUploader);
 builder.registerAndUse(FilePutController);
 builder.registerAndUse(RabbitMqConnectionConfig);

@@ -1,6 +1,7 @@
 import { configDotenv } from 'dotenv';
 import { DataSource } from 'typeorm';
 
+import { TypeEntity } from '../../../../backoffice/type/infrastructure/persistence/TypeEntity';
 import { DomainEventEntity } from './DomainEventEntity';
 
 configDotenv();
@@ -15,7 +16,7 @@ export default class TypeOrmConnection {
 			username: env.DATABASE_USER as unknown as string,
 			password: env.DATABASE_PASSWORD as unknown as string,
 			database: env.DATABASE_NAME as unknown as string,
-			entities: [DomainEventEntity],
+			entities: [DomainEventEntity, TypeEntity],
 			synchronize: true,
 			logging: true
 		});
