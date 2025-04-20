@@ -6,29 +6,41 @@ import path from 'path';
 import request from 'supertest';
 
 import { BackofficeBackendApp } from '../../../../../../src/apps/backoffice/backend/BackofficeBackendApp';
+import container from '../../../../../../src/apps/backoffice/backend/dependency-injection/diod.config';
+import EnvironmentArranger from '../../../../../contexts/shared/infrastructure/typeorm/EnvironmentArranger';
 
 let _request: request.Test;
 let application: BackofficeBackendApp;
 let _response: request.Response;
+const arrenger = container.get(EnvironmentArranger);
 
 // -------- INIT & TEARDOWN --------
-BeforeAll(() => {
+BeforeAll(async () => {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const envFile = path.resolve(process.cwd(), `.env.${process.env.NODE_ENV!}`);
 	configDotenv({ path: envFile });
-	//console.log(process.env);
-
 	application = new BackofficeBackendApp();
-	application.start();
+	await application.start();
+	await arrenger.clean();
 });
 
-AfterAll(() => {
-	application.stop();
+AfterAll(async () => {
+	await arrenger.clean();
+	await arrenger.close();
+	await application.stop();
+
+	setTimeout(() => process.exit(0), 30000);
 });
 
 // -------- GIVEN --------
 Given('I send a GET request to {string}', (route: string) => {
 	_request = request(application.httpServer).get(route);
+});
+
+Given('I send a PUT request to {string} with body:', (route: string, body: string) => {
+	_request = request(application.httpServer)
+		.put(route)
+		.send(JSON.parse(body) as object);
 });
 
 // -------- THEN --------
