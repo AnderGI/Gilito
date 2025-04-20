@@ -22,7 +22,7 @@ describe('TypesAdder', () => {
 		it('should throw an exception when a type already exists', async () => {
 			const type = TypeMother.create();
 			const existingType = TypeMother.create({
-				id: type.id.value, // simula el mismo UUID
+				id: type.id.value,
 				type: TypeTypeMother.random().value
 			});
 

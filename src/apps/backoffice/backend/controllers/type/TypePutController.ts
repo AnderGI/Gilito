@@ -10,8 +10,11 @@ import { AddTypeRequest } from './AddTypeRequest';
 export default class TypePutController implements Controller {
 	constructor(private readonly _: TypeAdder) {}
 	async run(req: AddTypeRequest, res: Response): Promise<void> {
-		console.log('controller');
-		await this._.run(req.typeId, req.type);
-		res.sendStatus(httpStatus.ACCEPTED).send();
+		try {
+			await this._.run(req.typeId, req.type);
+			res.sendStatus(httpStatus.ACCEPTED).send();
+		} catch {
+			console.error('err');
+		}
 	}
 }
