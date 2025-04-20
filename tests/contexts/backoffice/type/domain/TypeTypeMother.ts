@@ -8,7 +8,7 @@ export class TypeTypeMother {
 	}
 
 	static random(): TypeType {
-		const length = faker.datatype.number({ min: 1, max: 15, precision: 1 });
+		const length = faker.datatype.number({ min: 1, max: 10, precision: 1 });
 		const value = faker.lorem.word(length);
 
 		return new TypeType(value);
