@@ -9,11 +9,7 @@ export class TypeTypeMother {
 
 	static random(): TypeType {
 		return new TypeType(
-			faker.random.alpha({
-				// TODO review and change the min and max <- should also be subject under test
-				count: faker.datatype.number({ min: 1, max: 100 }),
-				upcase: faker.random.arrayElement([true, false])
-			})
+			faker.lorem.word(faker.datatype.number({ min: 5, max: 100, precision: 1 })) ?? 'dummy'
 		);
 	}
 }

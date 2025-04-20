@@ -6,24 +6,29 @@ import path from 'path';
 import request from 'supertest';
 
 import { BackofficeBackendApp } from '../../../../../../src/apps/backoffice/backend/BackofficeBackendApp';
+import container from '../../../../../../src/apps/backoffice/backend/dependency-injection/diod.config';
+import EnvironmentArranger from '../../../../../contexts/shared/infrastructure/typeorm/EnvironmentArranger';
 
 let _request: request.Test;
 let application: BackofficeBackendApp;
 let _response: request.Response;
+const arrenger = container.get(EnvironmentArranger);
 
 // -------- INIT & TEARDOWN --------
 BeforeAll(async () => {
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const envFile = path.resolve(process.cwd(), `.env.${process.env.NODE_ENV!}`);
 	configDotenv({ path: envFile });
-	//console.log(process.env);
-
 	application = new BackofficeBackendApp();
 	await application.start();
+	await arrenger.clean();
 });
 
 AfterAll(async () => {
+	await arrenger.clean();
+	await arrenger.close();
 	await application.stop();
+
 	setTimeout(() => process.exit(0), 30000);
 });
 

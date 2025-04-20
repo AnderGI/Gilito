@@ -19,6 +19,7 @@
     "test:unit": "cross-env NODE_ENV=test jest --passWithNoTests --testPathPattern './tests/contexts/.*/application/.*\\.test\\.ts'",
     "start": "cross-env NODE_ENV=production node dist/src/apps/backoffice/backend/start",
     "features:test:e2e": "cross-env NODE_ENV=features cucumber-js -p backoffice_backend",
+    "features:test:integration": "cross-env NODE_ENV=features NODE_OPTIONS=\"--experimental-vm-modules\" jest --passWithNoTests --testPathPattern='tests/contexts/.*/infrastructure/.*\\.test\\.ts'",
     "build": "npm run build:clean && npm run build:tsc && npm run build:di",
     "build:tsc": "tsc -p tsconfig.prod.json",
     "build:di": "copy 'src/**/*.{json,yaml,html,png}' dist/src",
@@ -26,6 +27,7 @@
     "feature:rabbitmq:configure": "NODE_ENV=features npx ts-node ./src/apps/scripts/configure-rabbitmq.ts",
     "feature:rabbitmq:consume": "NODE_ENV=features npx ts-node ./src/apps/scripts/consume-rabbitmq.ts",
     "feature:postrges:configure": "NODE_ENV=features npx ts-node ./src/apps/scripts/configure-postgres.ts"
+
 
   },
   "dependencies": {

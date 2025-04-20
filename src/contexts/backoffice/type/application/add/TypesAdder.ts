@@ -1,6 +1,5 @@
 import { Service } from 'diod';
 
-import ExistingTypeException from '../../domain/ExistingTypeException';
 import Type from '../../domain/Type';
 import TypeRepository from '../../domain/TypeRepository';
 
@@ -11,11 +10,10 @@ export default class TypeAdder {
 		const entity = Type.fromPrimitives({ id, type });
 
 		const inDdbbType = await this.repo.search(entity);
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (inDdbbType !== null && inDdbbType !== undefined) {
-			throw new ExistingTypeException(`Already existing type with id ${inDdbbType.id.value}`);
-		}
 
-		await this.repo.save(entity);
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (!inDdbbType) {
+			await this.repo.save(entity);
+		}
 	}
 }

@@ -1,6 +1,8 @@
 import { ContainerBuilder } from 'diod';
 import { DataSource } from 'typeorm';
 
+import EnvironmentArranger from '../../../../../tests/contexts/shared/infrastructure/typeorm/EnvironmentArranger';
+import { TypeOrmEnvironmentArranger } from '../../../../../tests/contexts/shared/infrastructure/typeorm/TypeOrmEnvironmentArrenger';
 import FileUploader from '../../../../contexts/backoffice/file/application/upload/FileUploader';
 import FileRepository from '../../../../contexts/backoffice/file/domain/FIleRepository';
 import R2CloudflareFIleRepository from '../../../../contexts/backoffice/file/infrastructure/persistence/r2-cloudflare/R2CloudflareFIleRepository';
@@ -23,12 +25,13 @@ const builder = new ContainerBuilder();
 builder.registerAndUse(StatusGetController);
 builder.registerAndUse(TypePutController);
 builder.registerAndUse(TypeAdder);
-builder.register(TypeRepository).use(TypeOrmTypeRepository);
 builder.registerAndUse(FileUploader);
 builder.registerAndUse(FilePutController);
 builder.registerAndUse(RabbitMqConnectionConfig);
 builder.registerAndUse(DomainEventJsonDeserializer);
 builder.register(DataSource).useFactory(() => TypeOrmConnection.getConnection());
+builder.register(TypeRepository).use(TypeOrmTypeRepository);
+builder.register(EnvironmentArranger).use(TypeOrmEnvironmentArranger);
 builder.registerAndUse(DomainEventFallback);
 builder
 	.register(RabbitMQConnection)

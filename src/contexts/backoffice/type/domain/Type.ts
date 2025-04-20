@@ -18,6 +18,6 @@ export default class Type {
 			return false;
 		}
 
-		return this.id === other.id;
+		return this.constructor.name === other.constructor.name && this.id.value === other.id.value;
 	}
 }

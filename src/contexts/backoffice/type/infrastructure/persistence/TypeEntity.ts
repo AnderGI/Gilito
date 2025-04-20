@@ -1,6 +1,9 @@
 import { EntitySchema } from 'typeorm';
 
 import Type from '../../domain/Type';
+import TypeId from '../../domain/TypeId';
+import TypeType from '../../domain/TypeType';
+import { ValueObjectTransformer } from './ValueObjectTransformer';
 
 export const TypeEntity = new EntitySchema<Type>({
 	name: 'TypeEntity',
@@ -8,10 +11,12 @@ export const TypeEntity = new EntitySchema<Type>({
 	columns: {
 		id: {
 			type: String,
-			primary: true
+			primary: true,
+			transformer: ValueObjectTransformer(TypeId)
 		},
 		type: {
-			type: String
+			type: String,
+			transformer: ValueObjectTransformer(TypeType)
 		}
 	}
 });

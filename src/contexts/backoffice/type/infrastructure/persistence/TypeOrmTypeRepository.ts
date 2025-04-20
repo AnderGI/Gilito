@@ -1,6 +1,7 @@
 import { Service } from 'diod';
 import { DataSource } from 'typeorm';
 
+import { Nullable } from '../../../../shared/domain/Nullable';
 import Type from '../../domain/Type';
 import TypeRepository from '../../domain/TypeRepository';
 import { TypeEntity } from './TypeEntity';
@@ -9,6 +10,16 @@ import { TypeEntity } from './TypeEntity';
 export default class TypeOrmTypeRepository extends TypeRepository {
 	constructor(private readonly datasource: DataSource) {
 		super();
+	}
+
+	public async search(_: Type): Promise<Nullable<Type>> {
+		const connection = await this.getInitializedConnection();
+
+		const repo = connection.getRepository(this.entitySchema());
+
+		const aggregate = repo.findOne({ where: { id: _.id } });
+
+		return aggregate;
 	}
 
 	public async save(_: Type): Promise<void> {

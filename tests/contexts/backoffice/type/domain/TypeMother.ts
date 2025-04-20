@@ -9,7 +9,7 @@ export class TypeMother {
 				{},
 				{
 					id: TypeIdMother.random().value,
-					path: TypeTypeMother.random().value
+					type: TypeTypeMother.random().value
 				},
 				_
 			)

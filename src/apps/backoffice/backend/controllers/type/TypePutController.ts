@@ -9,8 +9,9 @@ import { AddTypeRequest } from './AddTypeRequest';
 @Service()
 export default class TypePutController implements Controller {
 	constructor(private readonly _: TypeAdder) {}
-	run(req: AddTypeRequest, res: Response): void {
-		this._.run(req.typeId, req.type);
+	async run(req: AddTypeRequest, res: Response): Promise<void> {
+		console.log('controller');
+		await this._.run(req.typeId, req.type);
 		res.sendStatus(httpStatus.ACCEPTED).send();
 	}
 }
